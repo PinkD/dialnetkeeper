@@ -16,7 +16,7 @@ int main( int argc, char *argv[] )
 void get_user_message( int argc, char *argv[], char *user, char *radius )
 {
 	if ( 3 != argc ) {
-		printf ( "Usage: dianetkeeper <user_name> <raduis>\n"
+		printf ( "Usage: dianetkeeper <user_name> <radius>\n"
 				"Radius as falllow:\n"
 				"ChongQing Netkeeper: cqxinliradius002\n"
 				"ChongQing Netkeeper(0094): xianxinli1radius\n"
@@ -29,17 +29,14 @@ void get_user_message( int argc, char *argv[], char *user, char *radius )
 				"QingHai: qhtel@xiaoyuanyi\n" );
 		exit(-1);
 	}
-	/*strcpy( user, argv[1] );*/
-	/*strcpy( radius, argv[2] );*/
-	strcpy( user, "1637908@cqupt");
-	strcpy( radius, "cqxinliradius002" );
+	strcpy( user, argv[1] );
+	strcpy( radius, argv[2] );
 }
 
 void get_real_user_name( const char *src, const char *radius, char *dst )
 {
 	char time_byte[4], *before_md5;
 	unsigned char after_md5[16];
-	/*char out[34];*/
 	char md5_01h[2], md5_01[3];
 	char time_hash[4], pin_27[6];
 	int i;
@@ -59,7 +56,8 @@ void get_real_user_name( const char *src, const char *radius, char *dst )
 	MD5_Final( after_md5, &md5 );
 	md5_01h[0] = after_md5[0] >> 4 & 0xF;
 	md5_01h[1] = after_md5[0] & 0xF;
-	sprintf( md5_01, "%02x%02x", md5_01h[0], md5_01h[1] );
+	sprintf( md5_01, "%x", md5_01h[0] );
+	sprintf( md5_01 + 1, "%x", md5_01h[1] );
 
 	for ( i = 0; i < 32; i++ ) {
 		tmp[i] = time_byte[ (31-i)/8 ] & 1;
@@ -93,17 +91,9 @@ void get_real_user_name( const char *src, const char *radius, char *dst )
 		dst[1] = '\n';
 
 	memcpy( dst + 2, pin_27, 6 );
-	dst[8] = md5_01[0]; /*dst[8] dst[9] 始终与原来dianetkeeper算出来的不一样*/ 
-	dst[9] = md5_01[1]; /*下面注释采用了dianetkeeper的办法，还是不行。*/ 
-	/*for ( i = 0; i < 16; i++ ) {*/
-		/*sprintf(out + 2*i, "%02x", after_md5[i]);*/
-		/*sprintf(out + 2*i + 1, "%02x", after_md5[i] << 4);*/
-	/*}*/
-	/*dst[8] = out[0];*/
-	/*dst[9] = out[1];*/
-	/*sprintf( dst + 8, "%02x", after_md5[0] );*/
-	/*sprintf( dst + 9, "%02x", after_md5[0] << 4 );*/
-
+	dst[8] = md5_01[0];
+	dst[9] = md5_01[1];
 	strcpy( dst + 10, src );
+
 	free(before_md5);
 }
