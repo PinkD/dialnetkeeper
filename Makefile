@@ -10,7 +10,7 @@ clean:
 	-rm *.o dianetkeeper
 
 install:
-	@sudo cp /usr/bin/dialnetkeeper dianetkeeper.bak 
+	@sudo cp /usr/bin/dianetkeeper dianetkeeper.bak 
 	@sudo cp dianetkeeper /usr/bin/
 
 uninstall:
